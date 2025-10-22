@@ -13,6 +13,6 @@ const realtimecharactercounterBUTTON = document.addEventListener('click', () => 
 const randompasswordgeneratorBUTTON = document.addEventListener('click', () => { redirect('randompasswordgenerator') });
 
 
-function redirect(location){
-  window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/' + location;
+function redirect(newlocation){
+  window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/' + newlocation;
 }
