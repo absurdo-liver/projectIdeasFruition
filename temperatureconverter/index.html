@@ -1,13 +1,165 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>placeholderName</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
-    <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
-    <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
-  </head>
-  <body>
-  </body>
+
+<head>
+	<meta charset="utf-8">
+	<title>temperature converter</title>
+
+	<style>
+	#redirectToMain {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	body {
+		padding: 30px;
+		text-align: center;
+		background-color: rgba(10, 60, 10, 0.5);
+		margin: 0px;
+		z-index: 0;
+	}
+
+	.arrowUp1 {
+		transform: rotate(-45deg) translate(-30px, -50px);
+		transition: ease-in-out 0.2s;
+	}
+
+	.arrowDown1 {
+		transform: rotate(135deg) translate(-30px, -50px);
+		transition: ease-in-out 0.2s;
+	}
+
+	.arrowUp2 {
+		transform: rotate(-45deg) translate(-30px, -50px);
+		transition: ease-in-out 0.2s;
+	}
+
+	.arrowDown2 {
+		transform: rotate(-225deg) translate(-30px, -50px);
+		transition: ease-in-out 0.2s;
+	}
+
+	.container {
+		position: absolute;
+		top: 5%;
+		font-size: 25px;
+		justify-self: center;
+		justify-items: center;
+		display: grid;
+		width: 75vw;
+		height: 80vh;
+		padding-top: 5vh;
+		padding-bottom: 5vh;
+		padding: 20px;
+		border: 2px solid black;
+		border-radius: 15px;
+		background-color: rgba(0, 0, 0, 0.25);
+		z-index: 0;
+	}
+
+	.container input {
+		font-size: 25px;
+		width: 70vw;
+		height: 10vh;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		background-color: rgba(255, 255, 255, 0.25);
+		border-radius: 15px;
+	}
+
+	.container #submitButton {
+		font-size: 25px;
+		width: 100%;
+		height: 10vh;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		background-color: rgba(255, 255, 255, 0.25);
+		border-radius: 15px;
+	}
+
+	.container #submitButton:hover {
+		font-size: 30px;
+		width: 105%;
+		height: 12vh;
+		background-color: rgba(255, 255, 255, 0.125);
+	}
+
+	.container #arrowText {
+		font-size: 75px;
+		width: 10px;
+		height: 10px;
+		margin-top: 5px;
+		margin-bottom: 10px;
+		background-color: rgba(255, 255, 255, 0);
+		border-radius: 15px;
+	}
+
+	.container .overlay {
+		width: 100%;
+		height: 25vh;
+		background-color: rgba(255, 255, 255, 0.125);
+		position: absolute;
+		top: 18%;
+		border: 0px solid rgba(0, 0, 0, 0);
+		z-index: 1;
+	}
+
+	</style>
+	<button id='redirectToMain' onclick="redirectToMain()"> go back</button>
+</head>
+
+<body>
+	<div class='container'>
+		<input id='celcius' type="number" placeholder="℃">
+		<p id='arrowText' class="arrowDown1">↗</p>
+		<button id='arrowOverlay' class="overlay" onclick="arrowSwap()"></button>
+		<input id='farheheight' type="number" placeholder="℉">
+		<button id='submitButton'> go </button>
+		<script>
+		const submitButton = document.getElementById('submitButton');
+		const celcius = document.getElementById('celcius');
+		const farheheight = document.getElementById('farheheight');
+		const arrowText = document.getElementById('arrowText');
+		const arrowOverlay = document.getElementById('arrowOverlay');
+		var conversion = 1; // 1 = c->f | 0 = f->c
+		var lastClass = 'arrowDown1'
+		submitButton.addEventListener('click', start);
+
+		function start() {
+			if (conversion === 1) {
+				if (celcius.value === '') return
+				// c to f (0°C × 9/5) + 32 = 32°F
+				farheheight.value = (32 + (Number(celcius.value) * (9 / 5))).toFixed(2);
+			} else if (conversion === 0) {
+				if (farheheight.value === '') return
+				// f to c (32°F − 32) × 5/9 = 0°C
+				celcius.value = ((Number(farheheight.value) - 32) * (5 / 9)).toFixed(2);
+			}
+		}
+
+		function arrowSwap() {
+			if (conversion === 0) {
+				arrowText.classList.remove(lastClass);
+				let random = Math.round(Math.random() + 1)
+				arrowText.classList.add(`arrowDown${random}`);
+				lastClass = `arrowDown${random}`;
+				conversion = 1;
+			} else if (conversion === 1) {
+				arrowText.classList.remove(lastClass);
+				let random = Math.round(Math.random() + 1)
+				arrowText.classList.add(`arrowUp${random}`);
+				lastClass = `arrowUp${random}`;
+				conversion = 0;
+			}
+		}
+
+		function redirectToMain() {
+			window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/';
+		}
+
+		</script>
+	</div>
+</body>
+
 </html>
