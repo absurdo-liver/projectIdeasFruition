@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+      <p id='test'></p>
+  </body>
+</html>
+
+const test = document.getElementById('test');
+
+
+test.textContent = 'testing';
+const initLength = test.textContent.length;
+var i = 0;
+var o = 0;
+const charList = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+
+function textLoop(){
+  let temp;
+  if(i < initLength){
+    temp = test.textContent.split('');
+    let rand = Math.floor(Math.random() * 27)
+    temp[i] = charList[rand];
+    test.textContent = temp.join('');
+    if(o < 100){
+      o++
+    } else {
+      i++
+      o = 0;
+    }
+  } else clearInterval(int)
+} 
+
+
+
+const int = setInterval(textLoop, 10);
