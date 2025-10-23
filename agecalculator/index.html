@@ -1,13 +1,138 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>placeholderName</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
+
+<head>
+    <title>age calculator</title>
+    <style>
+        body {
+            margin: 0px;
+        }
+
+        .container {
+            text-align: center;
+            display: flexbox;
+            justify-self: center;
+            width: 80vw;
+            height: 80vh;
+            margin-top: 10vh;
+            background-color: rgba(0, 0, 0, 0.25);
+            padding-top: 5vh;
+            border-radius: 10px;
+        }
+
+        #submitButton {
+            font-size: 1em;
+            position: relative;
+            top: 5%;
+            width: 80vw;
+            height: 8vw;
+            background-color: rgba(0, 0, 0, 0);
+            border: 0px solid black;
+            transition: ease-in-out 100ms;
+        }
+
+        #submitButton:hover {
+            font-size: 2em;
+            top: 4%;
+            height: 10vw;
+            background-color: rgba(0, 0, 0, 0.125);
+            cursor: grab;
+        }
+
+        p {
+            position: relative;
+            margin-bottom: 20px;
+            width: 80vw;
+            height: 5vh;
+            top: 8%;
+            font-size: 3em;
+        }
+
+        p:hover {
+            font-size: 4em;
+            top: 4%;
+            transition: ease-in-out 100ms;
+        }
+
+        input {
+            font-size: 1em;
+            width: 75vw;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: ease-in-out 100ms;
+        }
+
+        input:hover {
+            font-size: 2em;
+            background-color: rgba(255, 255, 255, 1);
+        }
+    </style>
     <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
-    <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
-  </head>
-  <body>
-  </body>
+    <script>
+        function redirectToMain() {
+            window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/';
+        }
+    </script>
+    <style>
+        #redirectToMain {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <input type="date" id='dateInput'>
+        <button id='submitButton'>start</button>
+        <p id='outputText'>text</p>
+        <div>
+            <script>
+                const dateInput = document.getElementById('dateInput');
+                const submitButton = document.getElementById('submitButton');
+                const outputText = document.getElementById('outputText');
+
+                submitButton.addEventListener('click', start);
+                submitButton.addEventListener('mousedown', () => {
+                    submitButton.style.cursor = 'pointer';
+                });
+                submitButton.addEventListener('mouseup', () => {
+                    submitButton.style.cursor = 'grab';
+                });
+
+                function start() {
+                    const inputValue = dateInput.value;
+                    if (!inputValue) {
+                        outputText.textContent = 'Please select a date.';
+                        return;
+                    }
+
+                    const [yearStr, monthStr, dayStr] = inputValue.split('-');
+                    const date = {
+                        year: Number(yearStr),
+                        month: Number(monthStr),
+                        day: Number(dayStr)
+                    };
+
+
+                    let output = calculateAge(date.year, date.month, date.day);
+                    outputText.textContent = output;
+                }
+
+
+                function calculateAge(year, month, day) {
+                    const today = new Date();
+                    const birthDate = new Date(year, month - 1, day);
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const m = today.getMonth() - birthDate.getMonth();
+
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+
+                    return `${age}`;
+                }
+            </script>
+</body>
+
 </html>
