@@ -37,3 +37,72 @@ function textLoop(){
 
 
 const int = setInterval(textLoop, 10);
+
+
+
+// -------------------------------
+
+const otherChars = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '', '=', '+', '[', ']', '{', '}', ';', ':', '\\', ',', '<', '.', '>', '/', '?'];
+
+function start(amm){
+  if(!amm) amm = 1
+  if(typeof amm === 'string') return randomize(amm.length, 1);
+  if(!Number.isInteger(amm)) amm = Math.round(amm)
+  return randomize(16, amm);
+}
+
+function checkDuplicates(arr){
+  for(let i = 0; i < arr.length - 1; i++){
+    if(arr[i] === arr[i+1]){
+      return true
+    }
+  }
+  return false
+}
+
+function dealWithDuplicates(arr){
+  for(let i = 0; i < arr.length - 1; i++){
+    if(arr[i] === arr[i+1]){
+      arr.splice(i, 1, randomizeIndep(1));
+    }
+  }
+  return arr
+}
+
+function randomizeIndep(n){
+  let output = [];
+  for(let i = 0; i < n; i++){
+    if((Math.random() * n) > n/6){
+      let newString = Math.random().toString(36).slice(2, 3);
+      if(/\d/.test(newString) === false){
+        if((Math.random() * n) < n/4){
+          newString = newString.toUpperCase();
+        }
+      }
+      output.push(newString);
+    } else {
+      let randomChar = Math.floor(Math.random() * otherChars.length);
+      output.push(otherChars[randomChar]);
+    }
+  }
+  return output.join('');
+}
+
+function randomize(n, amount){
+  let finaloutput = [];
+  for(let p = 0; p < amount; p++){
+    let output = []
+    for(let i = 0; i < n; i++){
+      output.push(randomizeIndep(1));
+    }
+    while(checkDuplicates(output)){
+      dealWithDuplicates(output);
+    }
+    finaloutput.push(output.join(''))
+  }
+  return finaloutput.join('\n');
+}
+
+
+
+console.log(start(10));
