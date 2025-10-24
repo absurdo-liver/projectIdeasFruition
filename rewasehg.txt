@@ -103,6 +103,6 @@ function randomize(n, amount){
   return finaloutput.join('\n');
 }
 
+console.log(start())
 
 
-console.log(start(10));
