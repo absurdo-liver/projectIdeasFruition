@@ -1,7 +1,6 @@
 const tipcalculatorBUTTON = document.getElementById('tipcalculator'); 
 const temperatureconverterBUTTON = document.getElementById('temperatureconverter'); 
 const agecalculatorBUTTON = document.getElementById('agecalculator'); 
-const recipebookappBUTTON = document.getElementById('recipebookapp'); 
 const dicerollsimulatorBUTTON = document.getElementById('dicerollsimulator'); 
 const rockpaperscissorsBUTTON = document.getElementById('rockpaperscissors'); 
 const stopwatchBUTTON = document.getElementById('stopwatch'); 
@@ -14,7 +13,6 @@ const randompasswordgeneratorBUTTON = document.getElementById('randompasswordgen
 tipcalculatorBUTTON.addEventListener('click',() => { redirect('tipcalculator'); });
 temperatureconverterBUTTON.addEventListener('click',() => { redirect('temperatureconverter'); });
 agecalculatorBUTTON.addEventListener('click',() => { redirect('agecalculator'); });
-recipebookappBUTTON.addEventListener('click',() => { redirect('recipebookapp'); });
 dicerollsimulatorBUTTON.addEventListener('click',() => { redirect('dicerollsimulator'); });
 rockpaperscissorsBUTTON.addEventListener('click',() => { redirect('rockpaperscissors'); });
 stopwatchBUTTON.addEventListener('click',() => { redirect('stopwatch'); });
