@@ -1,13 +1,134 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>dice roll simulator</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
-    <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
-    <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
-  </head>
-  <body>
-  </body>
+<head>
+	<meta charset="utf-8">
+	<title>dice roll simulator</title>
+	<style>
+	body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		min-height: 100vh;
+		background-color: #FFD1DC;
+		font-family: sans-serif;
+	}
+	.dice-container {
+		perspective: 1000px;
+		margin-bottom: 20px;
+	}
+	#die {
+		width: 100px;
+		height: 100px;
+		border: 2px solid #333;
+		background-color: #ffb3ba;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 4em;
+		font-weight: bold;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		transition: transform 0.5s ease-out;
+	}
+	#die1 {
+		color: black;
+		font-size: 130px;
+		position: relative;
+		width: 100px;
+		height: 100px;
+		transform: translate(0px, -45px);
+		z-index: 0;
+		cursor: default;
+		user-select: none;
+	}
+	.rolling {
+		animation: roll 0.5s infinite linear;
+		font-size: 130px;
+		width: 100px;
+		height: 100px;
+		transform: translate(0px, -45px);
+	}
+	@keyframes roll {
+		0% {
+			transform: rotateX(0deg) rotateY(0deg) translate(0px, -45px);
+		}
+		100% {
+			transform: rotateX(0deg) rotateY(360deg) translate(0px, -45px);
+		}
+	}
+	#rollButton {
+		background-color: #ececec;
+		position: absolute;
+		top: 75%;
+		width: max-content;
+		left: calc(50% - max-content);
+		padding: 10px 20px;
+		font-size: 1.2em;
+		cursor: pointer;
+		border-radius: 1cap;
+		z-index: 1;
+		transition: ease-in-out 250ms;
+	}
+	#rollButton:hover {
+		background-color: #ffffff;
+		font-size: 1.4em;
+	}
+	</style>
+	<button id='redirectToMain' onclick="redirectToMain()"> go back</button>
+	<script>
+	function redirectToMain() {
+		window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/';
+	}
+	</script>
+	<style>
+	#redirectToMain {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+	</style>
+</head>
+<body>
+	<div class="dice-container">
+		<div id="die">
+			<p id='die1'>⚀</p>
+		</div>
+	</div>
+	<button id="rollButton">roll dice</button>
+	</div>
+	<script>
+	const die = document.getElementById('die1');
+	const dieBg = document.getElementById('die');
+	const rollButton = document.getElementById('rollButton');
+	const diceFaces = [{
+		char: '⚀',
+		color: '#ffb3ba'
+	}, {
+		char: '⚁',
+		color: '#ffdfba'
+	}, {
+		char: '⚂',
+		color: '#ffffba'
+	}, {
+		char: '⚃',
+		color: '#baffc9'
+	}, {
+		char: '⚄',
+		color: '#bae1ff'
+	}, {
+		char: '⚅',
+		color: '#e5caff'
+	}];
+	function rollDice() {
+		die.classList.add('rolling');
+		const randomNumber = Math.floor(Math.random() * 6);
+		setTimeout(() => {
+			die.classList.remove('rolling');
+			dieBg.style.backgroundColor = diceFaces[randomNumber].color;
+			die.textContent = diceFaces[randomNumber].char;
+		}, 500);
+	}
+	rollButton.addEventListener('click', rollDice);
+	</script>
+</body>
 </html>
