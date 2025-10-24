@@ -1,14 +1,134 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>random password generator</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
-    <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
-    <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
-  </head>
-  <body>
-  </body>
+<head>
+	<meta charset="utf-8">
+	<title>random password generator</title>
+	<style>
+	body {
+		text-align: center;
+		margin: 0px;
+	}
+	h1 {
+		position: absolute;
+		font-size: 40px;
+		top: calc(50% - 1em);
+		justify-self: center;
+		white-space: pre-line;
+	}
+	p {
+		position: absolute;
+		opacity: 75%;
+		justify-self: center;
+		bottom: calc(100vh - 5ch);
+	}
+	#currentAmountText {
+		position: absolute;
+		opacity: 75%;
+		justify-self: center;
+		bottom: calc(100vh - 8ch);
+	}
+	#footer {
+		position: absolute;
+		opacity: 75%;
+		justify-self: center;
+		top: calc(100vh - 5ch);
+	}
+	</style>
+	<button id='redirectToMain' onclick="redirectToMain()"> go back</button>
+	<script>
+	function redirectToMain() {
+		window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/';
+	}
+	</script>
+	<style>
+	#redirectToMain {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+	</style>
+</head>
+<body>
+	<h1 id='passwordShow'>generating...</h1>
+	<p>use up/down arrow to change generator output amount</p>
+	<p id='currentAmountText'>current amount: 1</p>
+	<p id='footer'>reload or press enter key to generate new password</p>
+	<script>
+	const passwordShow = document.getElementById("passwordShow");
+	const currentAmountText = document.getElementById("currentAmountText");
+	const otherChars = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '', '=', '+', '[', ']', '{', '}', ';', ':', '\\', ',', '<', '.', '>', '/', '?'];
+	var amm = 1;
+	function start() {
+		passwordShow.textContent = randomize(16, amm);
+		passwordShow.style.top = `calc(50% - ${amm+1}ch)`;
+		let newSize = (200 - 2 * amm) / 100;
+		passwordShow.style.fontSize = `${newSize}em`;
+	}
+	function checkDuplicates(arr) {
+		for (let i = 0; i < arr.length - 1; i++) {
+			if (arr[i] === arr[i + 1]) {
+				return true
+			}
+		}
+		return false
+	}
+	function dealWithDuplicates(arr) {
+		for (let i = 0; i < arr.length - 1; i++) {
+			if (arr[i] === arr[i + 1]) {
+				arr.splice(i, 1, randomizeIndep(1));
+			}
+		}
+		return arr
+	}
+	function randomizeIndep(n) {
+		let output = [];
+		for (let i = 0; i < n; i++) {
+			if ((Math.random() * n) > n / 6) {
+				let newString = Math.random().toString(36).slice(2, 3);
+				if (/\d/.test(newString) === false) {
+					if ((Math.random() * n) < n / 4) {
+						newString = newString.toUpperCase();
+					}
+				}
+				output.push(newString);
+			} else {
+				let randomChar = Math.floor(Math.random() * otherChars.length);
+				output.push(otherChars[randomChar]);
+			}
+		}
+		return output.join('');
+	}
+	function randomize(n, amount) {
+		let finaloutput = [];
+		for (let p = 0; p < amount; p++) {
+			let output = []
+			for (let i = 0; i < n; i++) {
+				output.push(randomizeIndep(1));
+			}
+			while (checkDuplicates(output)) {
+				dealWithDuplicates(output);
+			}
+			finaloutput.push(output.join(''))
+		}
+		return finaloutput.join('\n');
+	}
+	window.addEventListener('keydown', (e) => {
+		if (e.key === 'ArrowUp') {
+			e.preventDefault()
+			if (amm > 0 && amm < 16) amm++
+			currentAmountText.textContent = `current amount: ${amm}`;
+		}
+		if (e.key === 'ArrowDown') {
+			e.preventDefault()
+			if (amm > 1 && amm <= 16) amm--
+			currentAmountText.textContent = `current amount: ${amm}`;
+		}
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			start();
+		}
+	});
+	document.addEventListener('DOMContentLoaded', start());
+	</script>
+</body>
 </html>
