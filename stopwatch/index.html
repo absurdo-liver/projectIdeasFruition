@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>placeholderName</title>
+    <title>stopwatch</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
     <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
@@ -10,5 +10,131 @@
     <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
   </head>
   <body>
+    <div class="container">
+      <div id="clockBody"></div>
+      <p id="timeDisplay">00h:00m:00s:000ms</p>
+      <button id="startStopButton" class="buttonStart">start</button>
+    </div>
   </body>
 </html>
+
+
+<!--
+
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+.container {
+  margin: 0px;
+  padding: 0px;
+  display: block;
+  justify-items: center;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vw;
+  background-color: aqua;
+}
+
+#clockBody {
+  margin: 0px;
+  padding: 0px;
+  display: block;
+  justify-self: center;
+  position: absolute;
+  top: 25%;
+  width: 40vw;
+  height: 40vw;
+  background-color: red;
+  z-index: 1;
+}
+
+#timeDisplay {
+  margin: 0px;
+  padding: 0px;
+  display: block;
+  justify-self: center;
+  position: absolute;
+  top: 25%;
+  width: max-content;
+  background-color: blue;
+  z-index: 2;
+}
+
+#startStopButton {
+  font-size: 2em;
+  font-weight: 600;
+  margin: 0px;
+  padding: 0px;
+  display: block;
+  justify-self: left;
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 25vw;
+  height: 10vh;
+  border-radius: 0 50px 50px 0;
+  z-index: 2;
+   transition: all 0.2s ease-in-out;
+}
+
+#startStopButton:hover {
+  font-size: 2.25em;
+}
+
+
+.buttonStart {
+  background-color: rgb(60, 255, 60);
+  color: rgb(25, 60, 25);
+  animation: buttonSwap 0.5s;
+}
+
+.buttonStop {
+  background-color: rgb(255, 60, 60);
+  color: rgb(40, 10, 10);
+  animation: buttonSwap 0.5s;
+}
+
+@keyframes buttonSwap {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(-200px);
+  }
+  100%{
+    transform: translateX(0px);
+  }
+}
+
+
+const clockBody = document.getElementById("clockBody");
+const timeDisplay = document.getElementById("timeDisplay");
+const startStopButton = document.getElementById("startStopButton");
+
+
+startStopButton.addEventListener('click', () => {
+  startStopButton.classList.toggle('buttonStart');
+  startStopButton.classList.toggle('buttonStop');
+
+  startStopButton.style.animation = 'none';
+
+  void startStopButton.offsetWidth;
+
+  startStopButton.style.animation = 'buttonSwap 0.5s';
+
+  swapButtonText();
+});
+
+function swapButtonText(){
+  if(startStopButton.textContent === 'start') {
+    startStopButton.textContent = 'stop';
+  } else if(startStopButton.textContent === 'stop') {
+    startStopButton.textContent = 'start';
+  }
+}
+
+-->
