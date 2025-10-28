@@ -2,13 +2,199 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>placeholderName</title>
+    <title>social media selector</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
     <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
     <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
+    <style> #redirectToMain{position: absolute; top:0px; left:0px; z-index: 1;}</style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&display=swap" rel="stylesheet">
   </head>
   <body>
+    <div id='tileContainer' class="container">
+      <div id='tile0' class="tile">
+        <h1 class="tileHeader"> Social Profile 1 </h1>
+        <p class="tileText"> Social Profile 1 Text Here </p> 
+        <a class="tileLink" target="_blank" href="https://www.google.com"> Social Link 1 </a>
+        <p class="tileFooter"> Profile Footer 1 </p>
+      </div>
+      <div id='tile1' class="tile">
+        <h1 class="tileHeader"> Social Profile 2 </h1>
+        <p class="tileText"> Social Profile 2 Text Here </p> 
+        <a class="tileLink" target="_blank" href="https://www.google.com"> Social Link 2 </a>
+        <p class="tileFooter"> Profile Footer 2 </p>
+      </div>
+      <div id='tile2' class="tile">
+        <h1 class="tileHeader"> Social Profile 3 </h1>
+        <p class="tileText"> Social Profile 3 Text Here </p> 
+        <a class="tileLink" target="_blank" href="https://www.google.com"> Social Link 3 </a>
+        <p class="tileFooter"> Profile Footer 3 </p>
+      </div>
+      <div id='tile3' class="tile">
+        <h1 class="tileHeader"> Social Profile 4 </h1>
+        <p class="tileText"> Social Profile 4 Text Here </p> 
+        <a class="tileLink" target="_blank" href="https://www.google.com"> Social Link 4 </a>
+        <p class="tileFooter"> Profile Footer 4 </p>
+      </div>
+    </div>
   </body>
 </html>
+
+
+<!-- 
+body{
+  margin: 0px;
+}
+
+.container {
+  background-color: aqua;
+  padding: 2.5vh;
+  display: grid;
+  position: absolute;
+  justify-self: center;
+  top: 2.5vh;
+  width: 90vw;
+  height: 90vh;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5vh;
+  z-index: 0;
+  border-radius: 2em;
+  overflow: scroll;
+  perspective: 1000px;
+}
+
+.tile {
+  background-color: brown;
+  min-width: max-content;
+  min-height: max-content;
+  position: relative;
+  text-align: center;
+  justify-items: center;
+  border-radius: 1em;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.tile:hover {
+  transform: translateY(-10px) rotateX(5deg) scale(1.05);
+  z-index: 3;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.tileHeader {
+  background-color: rgb(168, 40, 132);
+  font-family: Quicksand;
+  font-size: 2em;
+}
+
+.tileLink {
+  background-color: rgb(167, 190, 190);
+  font-family: Helvetica, sans-serif;
+  font-size: 0.8em;
+  position: absolute;
+  width: max-content;
+  bottom: 20%;
+  left: 25%;
+}
+
+.tileFooter {
+  background-color: rgb(255, 0, 0);
+  position: absolute;
+  width: max-content;
+  bottom: 2%;
+  left: 25%;
+  font-family: "Bitcount Grid Single", system-ui;
+  font-size: 1em;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0;
+}
+
+.tileText {
+  background-color: rgb(255, 116, 216);
+  font-family: Quicksand;
+  font-size: 1em;
+}
+
+
+
+
+
+function centerTileFooters() {
+  const elements = document.getElementsByClassName('tileFooter');
+
+  for (let i = 0; i < elements.length; i++) {
+    const tileFooter = elements[i];
+    const parent = tileFooter.parentElement;
+
+    if (!parent) continue;
+
+    const parentWidth = parseFloat(window.getComputedStyle(parent).width);
+    const footerWidth = parseFloat(window.getComputedStyle(tileFooter).width);
+
+    const leftPosition = (parentWidth - footerWidth) / 2;
+
+    tileFooter.style.left = `${leftPosition}px`;
+  }
+}
+
+function centerTileLinks() {
+  const elementsLink = document.getElementsByClassName('tileLink');
+
+  for (let i = 0; i < elementsLink.length; i++) {
+    const tileLink = elementsLink[i];
+    const linkParent = tileLink.parentElement;
+
+    if (!parent) continue;
+
+    const parentWidthLink = parseFloat(window.getComputedStyle(linkParent).width);
+    const footerWidthLink = parseFloat(window.getComputedStyle(tileLink).width);
+
+    const leftPositionLink = (parentWidthLink - footerWidthLink) / 2;
+
+    tileLink.style.left = `${leftPositionLink}px`;
+  }
+}
+
+
+
+window.addEventListener('DOMContentLoaded', centerTileFooters);
+window.addEventListener('DOMContentLoaded', centerTileLinks);
+document.addEventListener('DOMContentLoaded', () => {
+  const tiles = document.querySelectorAll('.tile');
+
+  tiles.forEach(tile => {
+    tile.addEventListener('mousemove', (e) => {
+      const rect = tile.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateY = (x - centerX) / centerX * 10;
+      const rotateX = (y - centerY) / centerY * -10;
+
+      tile.style.transform = `scale(1.05) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      tile.style.zIndex = '10';
+      tile.style.boxShadow = `0 10px 20px rgba(0, 0, 0, 0.4)`;
+    });
+
+    tile.addEventListener('mouseleave', () => {
+      tile.style.transform = '';
+      tile.style.zIndex = '0';
+      tile.style.boxShadow = '';
+    });
+  });
+});
+
+window.addEventListener('resize', centerTileFooters);
+window.addEventListener('resize', centerTileLinks);
+
+
+
+-->
