@@ -1,21 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>index.html</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
+    <style>
+        body {
+            margin: 0px;
+            background-color: rgb(156, 156, 156)
+        }
+
+        #buttonsContainer {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        button {
+            text-align: center;
+            font-size: 1.5em;
+            display: grid;
+            justify-self: center;
+            justify-content: center;
+            width: 90vw;
+            height: 12.5vh;
+            padding: calc((12.5vh - 1.5em)/2);
+            background-color: rgba(0, 0, 0, 0.125);
+            border-radius: 5vw;
+            transition: ease-in-out 100ms;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 0, 0.25);
+            height: 12.5vh;
+            font-size: 1.7em;
+            padding: calc((12.5vh - 1.7em)/2);
+        }
+    </style>
+</head>
+
+<body>
     <div id='buttonsContainer'>
-    <button id='tipcalculator'>tip calculator</button>
-    <button id='temperatureconverter'>temperature converter</button>
-    <button id='agecalculator'>age calculator</button>
-    <button id='dicerollsimulator'>dice roll simulator</button>
-    <button id='stopwatch'>stopwatch</button>
-    <button id='socialmediaselector'>social media selector</button>
-    <button id='realtimecharactercounter'> real time character counter</button>
-    <button id='randompasswordgenerator'>random password generator</button>
+        <button id='tipcalculator'>tip calculator</button>
+        <button id='temperatureconverter'>temperature converter</button>
+        <button id='agecalculator'>age calculator</button>
+        <button id='dicerollsimulator'>dice roll simulator</button>
+        <button id='stopwatch'>stopwatch</button>
+        <button id='socialmediaselector'>social media selector</button>
+        <button id='realtimecharactercounter'> real time character counter</button>
+        <button id='randompasswordgenerator'>random password generator</button>
     </div>
-  </body>
+    <script>
+        const tipcalculatorBUTTON = document.getElementById('tipcalculator');
+        const temperatureconverterBUTTON = document.getElementById('temperatureconverter');
+        const agecalculatorBUTTON = document.getElementById('agecalculator');
+        const dicerollsimulatorBUTTON = document.getElementById('dicerollsimulator');
+        const stopwatchBUTTON = document.getElementById('stopwatch');
+        const socialmediaselectorBUTTON = document.getElementById('socialmediaselector');
+        const realtimecharactercounterBUTTON = document.getElementById('realtimecharactercounter');
+        const randompasswordgeneratorBUTTON = document.getElementById('randompasswordgenerator');
+
+        tipcalculatorBUTTON.addEventListener('click', () => {
+            redirect('tipcalculator');
+        });
+        temperatureconverterBUTTON.addEventListener('click', () => {
+            redirect('temperatureconverter');
+        });
+        agecalculatorBUTTON.addEventListener('click', () => {
+            redirect('agecalculator');
+        });
+        dicerollsimulatorBUTTON.addEventListener('click', () => {
+            redirect('dicerollsimulator');
+        });
+        stopwatchBUTTON.addEventListener('click', () => {
+            redirect('stopwatch');
+        });
+        socialmediaselectorBUTTON.addEventListener('click', () => {
+            redirect('socialmediaselector');
+        });
+        realtimecharactercounterBUTTON.addEventListener('click', () => {
+            redirect('realtimecharactercounter');
+        });
+        randompasswordgeneratorBUTTON.addEventListener('click', () => {
+            redirect('randompasswordgenerator');
+        });
+
+
+        function redirect(newlocation) {
+            window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/' + newlocation;
+        }
+    </script>
+</body>
+
 </html>
