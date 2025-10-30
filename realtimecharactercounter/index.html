@@ -10,5 +10,140 @@
     <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
   </head>
   <body>
+    <p id='hintText'></p>
+    <p id='outputText'></p>
+    <input id="charsInput" type="text">
+    <div id='checkboxContainer'>
+      <label>exclude spaces<input type="checkbox" id="spaces" class="checkbox"></label>
+      <label>exclude periods<input type="checkbox" id="periods" class="checkbox"></label>
+      <label>exclude commas<input type="checkbox" id="commas" class="checkbox"></label>
+    </div>
   </body>
 </html>
+
+<!--
+body {
+  padding: 25px;
+  margin-top: 25%;
+  text-align: center;
+  background-color: rgb(222, 222, 222);
+}
+
+#outputText {
+  font-size: 2em;
+}
+
+#charsInput {
+  width: 75vw;
+  height: 2em;
+  font-size: 1.5em;
+  overflow-x: scroll;
+}
+
+#checkboxContainer {
+  position: absolute;
+  bottom: 2em;
+  right: 5%;
+  text-align: right;
+  display: grid;
+}
+
+#hintText {
+  opacity: 0%;
+  text-align: right;
+  position: absolute;
+  top: 40%;
+  left: 90%;
+  font-size: 1.5em;
+  color: #2ff72f;
+  transition: ease-out 250ms;
+}
+
+const charsInput = document.getElementById('charsInput');
+const outputText = document.getElementById('outputText');
+const hintText = document.getElementById('hintText');
+const checkBoxes = document.getElementsByClassName('checkbox')
+
+charsInput.addEventListener('input', inputsHandler);
+
+var excludeSpaces = true;
+var excludeCommas = true;
+var excludePeriods = true;
+var prevInput;
+var tempTimout;
+
+function inputsHandler(){
+  let input = charsInput.value.split('');
+
+  if (excludeSpaces) {
+    let i = 0;
+    while (i < input.length) {
+      if (input[i] === ' ') {
+          input.splice(i, 1);
+      } else {
+          i++;
+      }
+    }
+  }
+
+  if(excludeCommas){
+    let i = 0;
+    while (i < input.length) {
+      if (input[i] === ',') {
+          input.splice(i, 1);
+      } else {
+          i++;
+      }
+    }
+  }
+
+  if(excludePeriods){
+    let i = 0;
+    while (i < input.length) {
+      if (input[i] === '.') {
+          input.splice(i, 1);
+      } else {
+          i++;
+      }
+    }
+  }
+
+  if(parseInt(input.length) === 0){
+    outputText.textContent = 'start typing...';
+  } else {
+    outputText.textContent = parseInt(input.length);
+  }
+
+  checkDiff(parseInt(input.length))
+}
+
+function checkDiff(current){
+  if(current === prevInput) return
+  clearTimeout(tempTimout);
+
+  if(current > prevInput){
+    hintText.textContent = '+1';
+    hintText.style.opacity = '100%';
+    hintText.style.color = '#2ff72f';
+    prevInput = current;
+
+  } else {
+    hintText.textContent = '- 1';
+    hintText.style.opacity = '100%';
+    hintText.style.color = '#ff4040';
+    prevInput = current;
+  }
+
+  tempTimout = setTimeout(() => {
+    hintText.style.opacity = '0%';
+  },750);
+}
+
+function init(){
+  prevInput = parseInt(charsInput.value.split('').length);
+  outputText.textContent = 'start typing...';
+}
+
+window.addEventListener('DOMContentLoaded', init);
+
+--> 
