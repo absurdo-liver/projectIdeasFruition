@@ -1,149 +1,234 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>real-time character counter</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            padding: 25px;
+            margin-top: 25%;
+            text-align: center;
+            background-color: rgb(222, 222, 222);
+        }
+
+        #outputTextContainer {
+            perspective: 1000px;
+        }
+
+        #outputText {
+            justify-self: center;
+            width: max-content;
+            font-size: 2em;
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+            transform-origin: center;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        #outputText:hover {
+            transform: translateY(-10px) rotateX(5deg) scale(1.05);
+            z-index: 3;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+        }
+
+        #charsInput {
+            position: absolute;
+            left: 12.5vw;
+            width: 75vw;
+            height: 2em;
+            font-size: 1.5em;
+            overflow-x: scroll;
+        }
+
+        #checkboxContainer {
+            position: absolute;
+            bottom: 2em;
+            right: 5%;
+            text-align: right;
+            display: grid;
+        }
+
+        #hintText {
+            opacity: 0%;
+            text-align: right;
+            position: absolute;
+            top: 40%;
+            left: 90%;
+            font-size: 1.5em;
+            color: #2ff72f;
+            transition: ease-out 250ms;
+        }
+    </style>
     <button id='redirectToMain' onclick="redirectToMain()"> go back</button>
-    <script>function redirectToMain(){ window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/'; }</script>
-    <style> #redirectToMain{position: absolute; top:0px; left:0px;}</style>
-  </head>
-  <body>
+    <script>
+        function redirectToMain() {
+            window.location = 'https://absurdo-liver.github.io/projectIdeasFruition/';
+        }
+    </script>
+    <style>
+        #redirectToMain {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+
+<body>
     <p id='hintText'></p>
-    <p id='outputText'></p>
+    <div id='outputTextContainer'>
+        <p id='outputText'></p>
+    </div>
     <input id="charsInput" type="text">
     <div id='checkboxContainer'>
-      <label>exclude spaces<input type="checkbox" id="spaces" class="checkbox"></label>
-      <label>exclude periods<input type="checkbox" id="periods" class="checkbox"></label>
-      <label>exclude commas<input type="checkbox" id="commas" class="checkbox"></label>
+        <label>exclude spaces<input id="checkBox1" type="checkbox" id="box-1" class="checkbox"></label>
+        <label>exclude periods<input id="checkBox2" type="checkbox" id="box-2" class="checkbox"></label>
+        <label>exclude commas<input id="checkBox3" type="checkbox" id="box-3" class="checkbox"></label>
     </div>
-  </body>
+    <script>
+        const charsInput = document.getElementById('charsInput');
+        const outputText = document.getElementById('outputText');
+        const hintText = document.getElementById('hintText');
+        const checkBox1 = document.getElementById('checkBox1');
+        const checkBox2 = document.getElementById('checkBox2');
+        const checkBox3 = document.getElementById('checkBox3');
+
+        var currentValue;
+        var excludeSpaces = false;
+        var excludeCommas = false;
+        var excludePeriods = false;
+        var prevInput;
+        var tempTimout;
+
+        charsInput.addEventListener('input', inputsHandler);
+
+        checkBox1.addEventListener('change', () => {
+            excludeSpaces = checkBox1.checked;
+            inputsHandler();
+        });
+
+        checkBox2.addEventListener('change', () => {
+            excludeCommas = checkBox2.checked;
+            inputsHandler();
+        });
+
+        checkBox3.addEventListener('change', () => {
+            excludePeriods = checkBox3.checked;
+            inputsHandler();
+        });
+
+        outputText.addEventListener('mousemove', (e) => {
+            const rect = outputText.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateY = (x - centerX) / centerX * 10;
+            const rotateX = (y - centerY) / centerY * -10;
+            outputText.style.transform = `scale(1.05) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            outputText.style.zIndex = '10';
+            outputText.style.boxShadow = `0 10px 20px rgba(0, 0, 0, 0.4)`;
+        });
+
+        outputText.addEventListener('mouseleave', () => {
+            outputText.style.transform = '';
+            outputText.style.zIndex = '0';
+            outputText.style.boxShadow = '';
+        });
+
+        outputText.addEventListener('mousedown', async function() {
+            let toCopy = currentValue.toString();
+            try {
+                await navigator.clipboard.writeText(toCopy);
+                console.log('Text copied to clipboard:', toCopy);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        });
+
+
+        function inputsHandler() {
+            let input = charsInput.value.split('');
+
+            if (excludeSpaces) {
+                let i = 0;
+                while (i < input.length) {
+                    if (input[i] === ' ') {
+                        input.splice(i, 1);
+                    } else {
+                        i++;
+                    }
+                }
+            }
+
+            if (excludeCommas) {
+                let i = 0;
+                while (i < input.length) {
+                    if (input[i] === ',') {
+                        input.splice(i, 1);
+                    } else {
+                        i++;
+                    }
+                }
+            }
+
+            if (excludePeriods) {
+                let i = 0;
+                while (i < input.length) {
+                    if (input[i] === '.') {
+                        input.splice(i, 1);
+                    } else {
+                        i++;
+                    }
+                }
+            }
+
+            if (parseInt(input.length) === 0) {
+                outputText.textContent = 'start typing...';
+            } else {
+                outputText.textContent = parseInt(input.length);
+            }
+            currentValue = parseInt(input.length);
+            checkDiff(parseInt(input.length))
+        }
+
+        function checkDiff(current) {
+            if (current === prevInput) return
+            if (prevInput === undefined) {
+                prevInput = current;
+                return;
+            }
+
+            let diff = Math.abs(current - prevInput);
+            clearTimeout(tempTimout);
+
+            if (current > prevInput) {
+                hintText.textContent = `+${diff}`;
+                hintText.style.opacity = '100%';
+                hintText.style.color = '#2ff72f';
+                prevInput = current;
+            } else {
+                hintText.textContent = `- ${diff}`;
+                hintText.style.opacity = '100%';
+                hintText.style.color = '#ff4040';
+                prevInput = current;
+            }
+
+            tempTimout = setTimeout(() => {
+                hintText.style.opacity = '0%';
+            }, 750);
+        }
+
+        function init() {
+            currentValue = 0;
+            prevInput = 0;
+            outputText.textContent = 'start typing...';
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
 </html>
-
-<!--
-body {
-  padding: 25px;
-  margin-top: 25%;
-  text-align: center;
-  background-color: rgb(222, 222, 222);
-}
-
-#outputText {
-  font-size: 2em;
-}
-
-#charsInput {
-  width: 75vw;
-  height: 2em;
-  font-size: 1.5em;
-  overflow-x: scroll;
-}
-
-#checkboxContainer {
-  position: absolute;
-  bottom: 2em;
-  right: 5%;
-  text-align: right;
-  display: grid;
-}
-
-#hintText {
-  opacity: 0%;
-  text-align: right;
-  position: absolute;
-  top: 40%;
-  left: 90%;
-  font-size: 1.5em;
-  color: #2ff72f;
-  transition: ease-out 250ms;
-}
-
-const charsInput = document.getElementById('charsInput');
-const outputText = document.getElementById('outputText');
-const hintText = document.getElementById('hintText');
-const checkBoxes = document.getElementsByClassName('checkbox')
-
-charsInput.addEventListener('input', inputsHandler);
-
-var excludeSpaces = true;
-var excludeCommas = true;
-var excludePeriods = true;
-var prevInput;
-var tempTimout;
-
-function inputsHandler(){
-  let input = charsInput.value.split('');
-
-  if (excludeSpaces) {
-    let i = 0;
-    while (i < input.length) {
-      if (input[i] === ' ') {
-          input.splice(i, 1);
-      } else {
-          i++;
-      }
-    }
-  }
-
-  if(excludeCommas){
-    let i = 0;
-    while (i < input.length) {
-      if (input[i] === ',') {
-          input.splice(i, 1);
-      } else {
-          i++;
-      }
-    }
-  }
-
-  if(excludePeriods){
-    let i = 0;
-    while (i < input.length) {
-      if (input[i] === '.') {
-          input.splice(i, 1);
-      } else {
-          i++;
-      }
-    }
-  }
-
-  if(parseInt(input.length) === 0){
-    outputText.textContent = 'start typing...';
-  } else {
-    outputText.textContent = parseInt(input.length);
-  }
-
-  checkDiff(parseInt(input.length))
-}
-
-function checkDiff(current){
-  if(current === prevInput) return
-  clearTimeout(tempTimout);
-
-  if(current > prevInput){
-    hintText.textContent = '+1';
-    hintText.style.opacity = '100%';
-    hintText.style.color = '#2ff72f';
-    prevInput = current;
-
-  } else {
-    hintText.textContent = '- 1';
-    hintText.style.opacity = '100%';
-    hintText.style.color = '#ff4040';
-    prevInput = current;
-  }
-
-  tempTimout = setTimeout(() => {
-    hintText.style.opacity = '0%';
-  },750);
-}
-
-function init(){
-  prevInput = parseInt(charsInput.value.split('').length);
-  outputText.textContent = 'start typing...';
-}
-
-window.addEventListener('DOMContentLoaded', init);
-
---> 
