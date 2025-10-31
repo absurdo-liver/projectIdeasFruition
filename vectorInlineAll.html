@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>vector shi</title>
+  </head>
+  <body>
+    <script>
+      document.body.style.position = 'relative';
+      document.body.style.height = '100vh';
+      document.body.style.margin = '0px';
+      document.body.style.padding = '0px';
+      document.body.style.overflow = 'hidden';
+
+      const container = document.createElement('div');
+      container.id = 'vectcor-container';
+      container.style.position = 'absolute';
+      container.style.width = '100%';
+      container.style.height = '100%';
+      document.body.appendChild(container);
+
+      var currentVector = {x: 0, y: 0};
+      var currentMousePos = {x: 0, y: 0};
+
+      window.addEventListener('mousemove', trackMouse);
+
+      function createNewP(n, attributes){
+        for(let i = 0; i < n; i++){
+          let newElem = document.createElement('p');
+          newElem.id = `newElement${i+1}`;
+          newElem.textContent = attributes[i].content;
+          newElem.style.position = 'absolute';
+          newElem.style.color = attributes[i].color;
+          newElem.style.fontSize = attributes[i].fontSize;
+          newElem.style.top = attributes[i].top;
+          newElem.style.left = attributes[i].left;
+          newElem.style.margin = attributes[i].margin;
+          newElem.style.cursor = attributes[i].cursor;
+          newElem.style.width = 'max-content';
+          document.body.appendChild(newElem)
+        }
+      }
+
+      function trackMouse(e){
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let xpos = e.pageX;
+        let ypos = e.pageY;
+        currentMousePos.x = xpos;
+        currentMousePos.y = ypos;
+        let elems = document.querySelectorAll('p');
+        for(let i = 0; i < elems.length; i++){
+          let elem = document.getElementById(`newElement${i+1}`);
+          if (i+1 === 1) {
+            let out = createVector(
+            {x:width/2,y:height/2},
+            {x:xpos,y:ypos}
+          );
+          elem.textContent = `(${out.x}, ${out.y})`
+          elem.style.top = `calc(${currentMousePos.y}px - 5vh)`;
+          elem.style.left = `calc(${currentMousePos.x}px - 5vw)`;
+          }
+        }
+        storeVector(
+          {x:width/2,y:height/2},
+          {x:xpos,y:ypos}
+        );
+        drawVector();
+      }
+
+      function createVector(origin, current){
+        let vx = current.x - origin.x;
+        let vy = current.y - origin.y;
+        let vector = {x: vx, y: -vy}
+        return {x: vector.x, y: vector.y}
+      }
+
+      function storeVector(origin, current){
+        let temp = createVector(origin, current)
+        currentVector.x = temp.x;
+        currentVector.y = temp.y;
+      }
+
+      function drawVector() {
+        const origin = {x: window.innerWidth/2, y: window.innerHeight/2};
+        const vector = currentVector;
+        const n = 50;
+        container.innerHTML = '';
+
+        for (let i = 0; i <= n; i++) {
+          const t = i / n;
+          const pointX = origin.x + vector.x * t;
+          const pointY = origin.y + (-1*vector.y) * t;
+          const newElem = document.createElement('p');
+          newElem.textContent = '.';
+          newElem.style.position = 'absolute';
+          newElem.style.margin = '0';
+          newElem.style.padding = '0';
+          newElem.style.top = `${pointY}px`;
+          newElem.style.left = `${pointX}px`;
+          newElem.style.cursor = 'default';
+          container.appendChild(newElem);
+        }
+      }
+
+      function init(){
+        createNewP(1,[{
+          content: '(0,0)',
+          color: 'blue',
+          fontSize: '1em',
+          top: '0%',
+          left: '0%',
+          margin: '0px',
+          cursor: 'default'
+        }]);
+        drawVector();
+      }
+
+      window.addEventListener('DOMContentLoaded', init);
+    </script>
+  </body>
+</html>
