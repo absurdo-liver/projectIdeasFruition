@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body style="padding: 25px">
+    <h1>Combine HTML, CSS, and JS files</h1>
+    <p>Select your HTML, CSS, and JS files to combine them into a single HTML file.</p>
+
+    <input type="file" id="fileInput" multiple>
+    <button onclick="combineFiles()">Combine Files</button>
+
+    <div id="output"></div>
+    <script>
+        async function combineFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+
+            if (files.length === 0) {
+                alert('Please select files.');
+                return;
+            }
+
+            let htmlContent = '';
+            let cssContent = '';
+            let jsContent = '';
+
+            const readPromises = Array.from(files).map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const content = event.target.result;
+                        if (file.name.endsWith('.html')) {
+                            htmlContent = content;
+                        } else if (file.name.endsWith('.css')) {
+                            cssContent += content;
+                        } else if (file.name.endsWith('.js')) {
+                            jsContent += content;
+                        }
+                        resolve();
+                    };
+                    reader.onerror = (error) => {
+                        reject(error);
+                    };
+                    reader.readAsText(file);
+                });
+            });
+
+            try {
+                await Promise.all(readPromises);
+
+                if (!htmlContent) {
+                    alert('No HTML file selected.');
+                    return;
+                }
+
+                const combinedHtml = htmlContent
+                    .replace('</head>', `<style>${cssContent}</style></head>`)
+                    .replace('</body>', `<script>${jsContent}`)
+                displayCombinedFile(combinedHtml);
+
+            } catch (error) {
+                alert('An error occurred while reading files.');
+                console.error('File reading error:', error);
+            }
+        }
+
+        function displayCombinedFile(content) {
+            const outputDiv = document.getElementById('output');
+
+            const title = document.createElement('h3');
+            title.textContent = 'Combined File Content';
+
+            const textarea = document.createElement('textarea');
+            textarea.rows = '10';
+            textarea.cols = '80';
+
+            textarea.value = content;
+
+            const br = document.createElement('br');
+
+            const downloadButton = document.createElement('button');
+            downloadButton.textContent = 'Download as combined.html';
+            downloadButton.onclick = () => downloadFile(encodeURIComponent(content));
+
+            outputDiv.innerHTML = '';
+            outputDiv.appendChild(title);
+            outputDiv.appendChild(textarea);
+            outputDiv.appendChild(br);
+            outputDiv.appendChild(downloadButton);
+        }
+
+        function downloadFile(encodedContent) {
+            const content = decodeURIComponent(encodedContent);
+            const blob = new Blob([content], {
+                type: 'text/html'
+            });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'combined.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</script>
+</body>
+
+</html>
