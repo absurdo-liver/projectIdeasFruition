@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#renderCanvas {
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	</style>
+	<script src="https://cdn.babylonjs.com/babylon.js"></script>
+	<script src="https://cdn.babylonjs.com/gui/babylon.gui.js"></script>
+</head>
+
+<body>
+	<canvas id="renderCanvas"></canvas>
+	<script>
+		const canvas = document.getElementById("renderCanvas");
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		const engine = new BABYLON.Engine(canvas, true);
+
+		const createScene = function() {
+			const scene = new BABYLON.Scene(engine);
+			scene.clearColor = new BABYLON.Color3(0, 0, 0);
+			const assumedFramesPerSecond = 60;
+			const earthGravity = -4;
+			scene.gravity = new BABYLON.Vector3(0, earthGravity / assumedFramesPerSecond, 0);
+			const camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 5, -10), scene);
+			camera.setTarget(BABYLON.Vector3.Zero());
+			camera.attachControl(canvas, true);
+			let isSprinting = false;
+			const walkSpeed = 1;
+			const sprintSpeed = 3;
+			camera.speed = walkSpeed;
+			const minFov = 0.5; // Minimum FOV in radians (e.g., 28.6 degrees)
+			const maxFov = 1.5; // Maximum FOV in radians (e.g., 85.9 degrees)
+			let defaultFov = 0.8; // Default FOV in radians
+			const sprintFovChange = 0.2; // The FOV increase during sprinting
+			let sliderFov = defaultFov; // Store the slider's value
+			camera.fov = defaultFov;
+			let currentHP = 100;
+			let currentShield = 100;
+
+			camera.angularSensibility = 1000;
+			camera.keysUp.push(87); // W
+			camera.keysDown.push(83); // S
+			camera.keysLeft.push(65); // A
+			camera.keysRight.push(68); // D
+			camera.inertia = 0;
+			camera.checkCollisions = true;
+			camera.applyGravity = false;
+			camera.ellipsoid = new BABYLON.Vector3(1, 2, 1);
+			camera.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
+			const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+			light.intensity = 0.7;
+			const ground = BABYLON.MeshBuilder.CreateGround("ground", {
+				width: 50,
+				height: 50
+			}, scene);
+			const groundMaterial = new BABYLON.StandardMaterial("groundMat", scene);
+			groundMaterial.diffuseColor = new BABYLON.Color3(0.85, 0.85, 0.85);
+			ground.material = groundMaterial;
+			ground.checkCollisions = true;
+			const box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
+			box.position.y = 1;
+			box.position.z = 5;
+			box.checkCollisions = true;
+			for (let i = 0; i < 10; i++) {
+				const wall = BABYLON.MeshBuilder.CreateBox("wall" + i, {
+					height: 3
+				}, scene);
+				wall.position = new BABYLON.Vector3(Math.random() * 40 - 20, 1.5, Math.random() * 40 - 20);
+				wall.checkCollisions = true;
+			}
+			scene.collisionsEnabled = true;
+			const jumpForce = 0.8;
+			let verticalVelocity = 0;
+			let canJump = true;
+			window.addEventListener("keydown", (event) => {
+				if (event.code === "Space" && canJump) {
+					verticalVelocity = jumpForce;
+					canJump = false;
+				} else if (event.code === "ShiftLeft") {
+					isSprinting = true;
+					camera.speed = sprintSpeed;
+					camera.fov = sliderFov + sprintFovChange;
+				}
+				if (event.code === "Space" || event.code === "ShiftLeft") {
+					event.preventDefault();
+				}
+			});
+			window.addEventListener("keyup", (event) => {
+				if (event.code === "ShiftLeft") {
+					isSprinting = false;
+					camera.speed = walkSpeed;
+					camera.fov = sliderFov;
+				}
+			});
+
+			scene.onBeforeRenderObservable.add(() => {
+				verticalVelocity += scene.gravity.y;
+				camera.cameraDirection.y = verticalVelocity;
+				const ray = new BABYLON.Ray(
+					camera.position,
+					new BABYLON.Vector3(0, -1, 0),
+					camera.ellipsoid.y + camera.ellipsoidOffset.y + 0.1
+				);
+				const pickInfo = scene.pickWithRay(ray);
+
+				if (pickInfo.hit && verticalVelocity <= 0) {
+					canJump = true;
+					verticalVelocity = 0;
+				}
+
+				sprintText.text = isSprinting ? "Sprinting" : "Walking";
+				hpText.text = "HP: " + currentHP;
+				shieldText.text = "Shield: " + currentShield;
+			});
+
+			canvas.addEventListener("click", () => {
+				canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+				if (canvas.requestPointerLock) {
+					canvas.requestPointerLock();
+				}
+			});
+			document.addEventListener("pointerlockchange", (event) => {
+				if (document.pointerLockElement !== canvas) {
+					camera.attachControl(canvas, true);
+				}
+			});
+			const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("myUI");
+			const crosshair = new BABYLON.GUI.Ellipse();
+			crosshair.width = "10px";
+			crosshair.height = "10px";
+			crosshair.color = "white";
+			crosshair.thickness = 2;
+			crosshair.background = "transparent";
+			advancedTexture.addControl(crosshair);
+			const hudPanel = new BABYLON.GUI.StackPanel();
+			hudPanel.width = "220px";
+			hudPanel.paddingLeft = "10px";
+			hudPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+			hudPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+			advancedTexture.addControl(hudPanel);
+			const sprintText = new BABYLON.GUI.TextBlock();
+			sprintText.text = "Walking";
+			sprintText.color = "white";
+			sprintText.height = "30px";
+			sprintText.fontSize = 20;
+			sprintText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+			hudPanel.addControl(sprintText);
+			const hpText = new BABYLON.GUI.TextBlock();
+			hpText.text = "HP: " + currentHP;
+			hpText.color = "red";
+			hpText.height = "30px";
+			hpText.fontSize = 20;
+			hpText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+			hudPanel.addControl(hpText);
+			const shieldText = new BABYLON.GUI.TextBlock();
+			shieldText.text = "Shield: " + currentShield;
+			shieldText.color = "blue";
+			shieldText.height = "30px";
+			shieldText.fontSize = 20;
+			shieldText.textHorizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+			hudPanel.addControl(shieldText);
+			const fovPanel = new BABYLON.GUI.StackPanel();
+			fovPanel.width = "250px";
+			fovPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+			fovPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+			fovPanel.paddingRight = "10px";
+			advancedTexture.addControl(fovPanel);
+			const fovText = new BABYLON.GUI.TextBlock();
+			fovText.text = "FOV: " + Math.round(defaultFov * 180 / Math.PI); // Display in degrees
+			fovText.color = "white";
+			fovText.height = "30px";
+			fovText.fontSize = 20;
+			fovPanel.addControl(fovText);
+			const fovSlider = new BABYLON.GUI.Slider();
+			fovSlider.minimum = minFov;
+			fovSlider.maximum = maxFov;
+			fovSlider.value = defaultFov;
+			fovSlider.height = "20px";
+			fovSlider.width = "200px";
+			fovSlider.color = "white";
+			fovSlider.background = "grey";
+			fovSlider.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+			fovSlider.onValueChangedObservable.add(function(value) {
+				sliderFov = value;
+				if (!isSprinting) {
+					camera.fov = value;
+				}
+				fovText.text = "FOV: " + Math.round(value * 180 / Math.PI);
+			});
+			fovPanel.addControl(fovSlider);
+			createEnemy(25, scene);
+
+			return scene;
+		};
+
+		const scene = createScene();
+		engine.runRenderLoop(function() {
+			scene.render();
+		});
+
+		function createEnemy(count, scene) {
+			const options = {
+				diameterX: 1.0,
+				diameterY: 2.0,
+				diameterZ: 1.0,
+				segments: 8
+			};
+			const material = new BABYLON.StandardMaterial("enemyMaterial", scene);
+			material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+			for (let i = 0; i < count; i++) {
+				const enemy = BABYLON.MeshBuilder.CreateSphere("enemy" + i, options, scene);
+				enemy.position = new BABYLON.Vector3(Math.random() * 40 - 20, 1.5, Math.random() * 40 - 20);
+				enemy.checkCollisions = true;
+				enemy.material = material;
+			}
+		}
+
+		window.addEventListener("resize", function() {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			engine.resize();
+		});
+	</script>
+</body>
+
+</html>
