@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        padding: 0px;
+        margin: 0px;
+      }
+      canvas {
+        padding: 0px;
+        margin: 0px;
+      }
+    </style>
+  </head>
+  <body>
+      <canvas id='canvas'></canvas>
+      <script>
+        const canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+
+        var mousePos = {
+          x: canvas.width / 2,
+          y: canvas.height / 2
+        };
+
+        var drawBuffer = [
+          {
+            func: drawGrid,
+            args: []
+          },
+          {
+            func: drawPoint,
+            args: [
+              () => canvas.width / 2,
+              () => canvas.height / 2,
+              5, 'blue'
+            ]
+          },
+          {
+            func: drawLine,
+            args: [
+              () => canvas.width / 2,
+              () => canvas.height / 2,
+              () => mousePos.x,
+              () => mousePos.y,
+              'purple'
+            ]
+          },
+          {
+            func: drawCircle,
+            args: [
+              () => canvas.width / 2,
+              () => canvas.height / 2,
+              () => Math.hypot(
+                Math.abs(mousePos.x - canvas.width / 2),
+                Math.abs(mousePos.y - canvas.height / 2)
+                ),
+              'red'
+            ]
+          }
+        ];
+
+        function drawCircle(x, y, radius, color) {
+          const xVal = typeof x === 'function' ? x() : x;
+          const yVal = typeof y === 'function' ? y() : y;
+          const radiusVal = typeof radius === 'function' ? radius() : radius;
+
+          ctx.strokeStyle = color;
+
+          if (!Array.isArray(xVal) && !Array.isArray(yVal)) {
+            ctx.beginPath();
+            ctx.arc(xVal, yVal, radiusVal, 0, 2 * Math.PI);
+            ctx.stroke();
+          } else if (Array.isArray(xVal) && Array.isArray(yVal) && xVal.length === yVal.length) {
+            for (let i = 0; i < xVal.length; i++) {
+              ctx.beginPath();
+              ctx.arc(xVal[i], yVal[i], radiusVal, 0, 2 * Math.PI);
+              ctx.stroke();
+            }
+          }
+        }
+
+
+        function drawLine(x1, y1, x2, y2, color) {
+          const x1Val = typeof x1 === 'function' ? x1() : x1;
+          const y1Val = typeof y1 === 'function' ? y1() : y1;
+          const x2Val = typeof x2 === 'function' ? x2() : x2;
+          const y2Val = typeof y2 === 'function' ? y2() : y2;
+
+          ctx.beginPath();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.moveTo(x1Val, y1Val);
+          ctx.lineTo(x2Val, y2Val);
+          ctx.stroke();
+
+          drawPoint([x1Val, x2Val], [y1Val, y2Val], 5, color);
+        }
+
+        function drawPoint(x, y, radius, color) {
+          const xVal = typeof x === 'function' ? x() : x;
+          const yVal = typeof y === 'function' ? y() : y;
+          const radiusVal = typeof radius === 'function' ? radius() : radius;
+          ctx.fillStyle = color;
+          if (!Array.isArray(xVal) && !Array.isArray(yVal)) {
+            ctx.beginPath();
+            ctx.arc(xVal, yVal, radiusVal, 0, 2 * Math.PI);
+            ctx.fill();
+          } else if (Array.isArray(xVal) && Array.isArray(yVal) && xVal.length === yVal.length) {
+            for (let i = 0; i < xVal.length; i++) {
+              ctx.beginPath();
+              ctx.arc(xVal[i], yVal[i], radiusVal, 0, 2 * Math.PI);
+              ctx.fill();
+            }
+          }
+        }
+
+
+        function drawGrid() {
+          ctx.beginPath();
+          ctx.strokeStyle = 'grey';
+          ctx.lineWidth = 1;
+          for (let i = 0; i < canvas.width; i += canvas.width / 20) {
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, canvas.height);
+          }
+          for (let i = 0; i < canvas.height; i += canvas.height / 20) {
+            ctx.moveTo(0, i);
+            ctx.lineTo(canvas.width, i);
+          }
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = 2;
+          for (let i = 0; i < canvas.width; i += canvas.width / 2) {
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, canvas.height);
+          }
+          for (let i = 0; i < canvas.height; i += canvas.height / 2) {
+            ctx.moveTo(0, i);
+            ctx.lineTo(canvas.width, i);
+          }
+          ctx.stroke();
+        }
+
+        function callerFunction(functions) {
+          for (let i = 0; i < functions.length; i++) {
+            let {
+              func,
+              args
+            } = functions[i];
+            func(...args);
+          }
+        }
+
+        function renderScene() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          callerFunction(drawBuffer);
+        }
+
+        function mouseMovementHandler(e){
+          mousePos.x = e.clientX;
+          mousePos.y = e.clientY;
+          renderScene()
+        }
+
+        function resizeHandler() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          renderScene();
+        }
+
+        function initialize() {
+          resizeHandler();
+          renderScene();
+        }
+
+        window.addEventListener('mousemove', mouseMovementHandler);
+        window.addEventListener('DOMContentLoaded', initialize);
+        window.addEventListener('resize', resizeHandler);
+      </script>
+  </body>
+</html>
